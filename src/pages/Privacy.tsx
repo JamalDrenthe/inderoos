@@ -10,7 +10,7 @@ const Privacy = () => {
             <div className="card-dark p-8 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">Inleiding</h2>
               <p className="text-[#A7A7AB] mb-4">
-                Gang2Bang respecteert de privacy van alle bezoekers en deelnemers aan onze evenementen. 
+                In De Roos respecteert de privacy van alle bezoekers en deelnemers aan onze evenementen. 
                 In deze privacyverklaring leggen we uit welke persoonlijke gegevens we verzamelen, 
                 hoe we deze gebruiken en welke rechten je hebt.
               </p>
@@ -22,12 +22,12 @@ const Privacy = () => {
             <div className="card-dark p-8 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">Verwerkingsverantwoordelijke</h2>
               <p className="text-[#A7A7AB] mb-4">
-                Gang2Bang is de verwerkingsverantwoordelijke voor de verwerking van jouw persoonsgegevens. 
+                In De Roos is de verwerkingsverantwoordelijke voor de verwerking van jouw persoonsgegevens. 
                 Voor vragen over deze privacyverklaring kun je contact opnemen via:
               </p>
               <ul className="space-y-2 text-[#A7A7AB]">
-                <li>E-mail: info@gang2bang.nl</li>
-                <li>Website: www.gang2bang.nl</li>
+                <li>E-mail: hello@inderoos.nl</li>
+                <li>Website: www.inderoos.nl</li>
               </ul>
             </div>
 
@@ -127,7 +127,7 @@ const Privacy = () => {
                 <li><strong>Recht op dataportabiliteit:</strong> Je mag je gegevens in een machineleesbaar formaat ontvangen.</li>
               </ul>
               <p className="text-[#A7A7AB] mt-4">
-                Om deze rechten uit te oefenen, kun je contact opnemen via info@gang2bang.nl.
+                Om deze rechten uit te oefenen, kun je contact opnemen via hello@inderoos.nl.
               </p>
             </div>
 
@@ -160,8 +160,8 @@ const Privacy = () => {
                 kun je contact opnemen via:
               </p>
               <ul className="space-y-2 text-[#A7A7AB]">
-                <li>E-mail: info@gang2bang.nl</li>
-                <li>Website: www.gang2bang.nl/contact</li>
+                <li>E-mail: hello@inderoos.nl</li>
+                <li>Website: www.inderoos.nl/contact</li>
               </ul>
               <p className="text-[#A7A7AB] mt-4">
                 Je hebt ook het recht om een klacht in te dienen bij de Autoriteit Persoonsgegevens.

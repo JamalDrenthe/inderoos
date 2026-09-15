@@ -29,12 +29,14 @@ const Booking = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [newReservationId, setNewReservationId] = useState<string>('');
-
+  
+  // Keep form data synced with URL param without triggering setState loop
   useEffect(() => {
-    if (eventId) {
+    if (eventId && eventId !== formData.selectedEventId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(prev => ({ ...prev, selectedEventId: eventId }));
     }
-  }, [eventId]);
+  }, [eventId, formData.selectedEventId]);
 
   const getMaxQuantity = (type: 'man' | 'stel' | 'vrouw') => {
     switch (type) {
@@ -82,34 +84,38 @@ const Booking = () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    const event = allEvents.find(e => e.id === formData.selectedEventId);
-    if (!event) return;
-    
-    const reservationId = `RES-${Date.now()}`;
-    const reservation: Reservation = {
-      id: reservationId,
-      eventId: formData.selectedEventId,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
-      ticketType: formData.ticketType,
-      quantity: formData.quantity,
-      totalPrice: calculateTotal(),
-      status: 'new',
-      notes: formData.notes,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+    const submitReservation = () => {
+      const event = allEvents.find(e => e.id === formData.selectedEventId);
+      if (!event) return;
+      
+      const reservationId = `RES-${Date.now()}`;
+      const reservation: Reservation = {
+        id: reservationId,
+        eventId: formData.selectedEventId,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        ticketType: formData.ticketType,
+        quantity: formData.quantity,
+        totalPrice: calculateTotal(),
+        status: 'new',
+        notes: formData.notes,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      setReservations(prev => [...prev, reservation]);
+      setNewReservationId(reservationId);
+      setIsSubmitting(false);
+      setShowSuccess(true);
+      
+      // In production: Send email to customer and admin notification
+      console.log('Email to customer:', formData.email);
+      console.log('Admin notification sent');
     };
     
-    setReservations(prev => [...prev, reservation]);
-    setNewReservationId(reservationId);
-    setIsSubmitting(false);
-    setShowSuccess(true);
-    
-    // In production: Send email to customer and admin notification
-    console.log('Email to customer:', formData.email);
-    console.log('Admin notification sent');
+    submitReservation();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -375,6 +381,7 @@ const Booking = () => {
                     value={formData.quantity}
                     onChange={handleInputChange}
                     className="w-full"
+                    aria-label="Aantal tickets"
                   >
                     {Array.from({ length: getMaxQuantity(formData.ticketType) }, (_, i) => i + 1).map(num => (
                       <option key={num} value={num}>

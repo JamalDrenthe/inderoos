@@ -20,8 +20,9 @@ import {
   CreditCard
 } from 'lucide-react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import type { Reservation, Event } from '../types';
+import AdminBlogPanel from '../components/AdminBlogPanel';
 import { getUpcomingEvents } from '../data/events';
+import type { Event, Reservation, ReservationMessage } from '../types';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -30,10 +31,22 @@ const Admin = () => {
   const [managedEvents, setManagedEvents] = useLocalStorage<Event[]>('managedEvents', getUpcomingEvents());
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'pending' | 'paid' | 'cancelled'>('all');
-  const [activeTab, setActiveTab] = useState<'reservations' | 'events' | 'settings'>('reservations');
+  const [activeTab, setActiveTab] = useState<'reservations' | 'events' | 'blog'>('reservations');
   const [expandedReservation, setExpandedReservation] = useState<string | null>(null);
   const [editingReservation, setEditingReservation] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Reservation>>({});
+  const [messagingReservation, setMessagingReservation] = useState<string | null>(null);
+  const [messageDraft, setMessageDraft] = useState<{
+    subject: string;
+    body: string;
+    paymentLink: string;
+    kind: ReservationMessage['kind'];
+  }>({
+    subject: '',
+    body: '',
+    paymentLink: '',
+    kind: 'payment_request',
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -63,6 +76,64 @@ const Admin = () => {
     );
     setEditingReservation(null);
     setEditForm({});
+  };
+
+  const resetMessageComposer = () => {
+    setMessagingReservation(null);
+    setMessageDraft({
+      subject: '',
+      body: '',
+      paymentLink: '',
+      kind: 'payment_request',
+    });
+  };
+
+  const handleOpenMessageComposer = (reservation: Reservation) => {
+    setMessagingReservation(reservation.id);
+    setMessageDraft({
+      subject:
+        reservation.status === 'new'
+          ? `Betaallink voor ${reservation.firstName} ${reservation.lastName}`
+          : `Update over reservering ${reservation.id}`,
+      body:
+        reservation.status === 'new'
+          ? `Hi ${reservation.firstName},\n\nHierbij ontvang je jouw betaallink voor ${getEventName(reservation.eventId)}. Zodra de betaling rond is, bevestigen we je plek direct in je inbox.\n\nGroet,\nIn De Roos`
+          : `Hi ${reservation.firstName},\n\nHier is een update over je reservering voor ${getEventName(reservation.eventId)}.\n\nGroet,\nIn De Roos`,
+      paymentLink: reservation.paymentLink || '',
+      kind: 'payment_request',
+    });
+  };
+
+  const handleSendMessage = (reservation: Reservation) => {
+    if (!messageDraft.subject.trim() || !messageDraft.body.trim()) {
+      return;
+    }
+
+    const nextMessage: ReservationMessage = {
+      id: `msg-${Date.now()}`,
+      reservationId: reservation.id,
+      recipientEmail: reservation.email,
+      subject: messageDraft.subject.trim(),
+      body: messageDraft.body.trim(),
+      createdAt: new Date().toISOString(),
+      kind: messageDraft.kind,
+    };
+
+    setReservations(prev =>
+      prev.map(r =>
+        r.id === reservation.id
+          ? {
+              ...r,
+              paymentLink: messageDraft.paymentLink.trim() || r.paymentLink,
+              status: messageDraft.kind === 'payment_request' && r.status === 'new' ? 'pending' : r.status,
+              messageHistory: [nextMessage, ...(r.messageHistory ?? [])],
+              updatedAt: new Date().toISOString(),
+            }
+          : r
+      )
+    );
+
+    resetMessageComposer();
   };
 
   const handleUpdateEventTheme = (eventId: string, newTheme: Event['theme']) => {
@@ -210,7 +281,7 @@ const Admin = () => {
       {/* Tabs */}
       <section className="px-6 lg:px-12 mb-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex gap-2 border-b border-white/10">
+          <div className="flex flex-wrap gap-2 border-b border-white/10">
             <button
               onClick={() => setActiveTab('reservations')}
               className={`px-6 py-4 font-medium text-sm transition-colors ${
@@ -230,6 +301,16 @@ const Admin = () => {
               }`}
             >
               Evenementen
+            </button>
+            <button
+              onClick={() => setActiveTab('blog')}
+              className={`px-6 py-4 font-medium text-sm transition-colors ${
+                activeTab === 'blog' 
+                  ? 'text-[#D61C1C] border-b-2 border-[#D61C1C]' 
+                  : 'text-[#A7A7AB] hover:text-white'
+              }`}
+            >
+              Blog
             </button>
           </div>
         </div>
@@ -296,8 +377,9 @@ const Admin = () => {
                 </div>
                 <div className="flex gap-2">
                   <select
+                    title="Filter op status"
                     value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value as any)}
+                    onChange={(e) => setStatusFilter(e.target.value as 'all' | 'new' | 'pending' | 'paid' | 'cancelled')}
                     className="bg-[#141416] min-w-[150px]"
                   >
                     <option value="all">Alle statussen</option>
@@ -330,24 +412,40 @@ const Admin = () => {
                   <div key={reservation.id} className="card-dark overflow-hidden">
                     {/* Summary row */}
                     <div 
-                      className="p-6 flex flex-col md:flex-row md:items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors"
+                      className="cursor-pointer p-6 transition-colors hover:bg-white/5"
                       onClick={() => setExpandedReservation(expandedReservation === reservation.id ? null : reservation.id)}
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="font-mono text-[#A7A7AB] text-sm">{reservation.id}</span>
-                          {getStatusBadge(reservation.status)}
+                      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.9fr_1fr_0.9fr_0.7fr_auto] lg:items-center">
+                        <div>
+                          <div className="mb-2 flex items-center gap-3">
+                            <span className="font-mono text-[#A7A7AB] text-sm">{reservation.id}</span>
+                            {getStatusBadge(reservation.status)}
+                          </div>
+                          <p className="text-white font-semibold">{reservation.firstName} {reservation.lastName}</p>
+                          <p className="text-[#A7A7AB] text-sm">{getEventName(reservation.eventId)}</p>
                         </div>
-                        <p className="text-white font-semibold">{reservation.firstName} {reservation.lastName}</p>
-                        <p className="text-[#A7A7AB] text-sm">{getEventName(reservation.eventId)}</p>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right">
+                        <div>
+                          <p className="text-xs uppercase tracking-[0.18em] text-[#A7A7AB]">Datum</p>
+                          <p className="text-white">{new Date(reservation.createdAt).toLocaleDateString('nl-NL')}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs uppercase tracking-[0.18em] text-[#A7A7AB]">Contact</p>
+                          <p className="text-white text-sm">{reservation.email}</p>
+                          <p className="text-[#A7A7AB] text-sm">{reservation.phone}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs uppercase tracking-[0.18em] text-[#A7A7AB]">Tickettype</p>
+                          <p className="text-white capitalize">{reservation.ticketType}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs uppercase tracking-[0.18em] text-[#A7A7AB]">Aantal</p>
+                          <p className="text-white">{reservation.quantity}</p>
+                        </div>
+                        <div className="flex items-center gap-6 lg:justify-end">
                           <p className="text-[#D61C1C] font-bold text-xl">€{reservation.totalPrice}</p>
-                          <p className="text-[#A7A7AB] text-sm capitalize">{reservation.ticketType} × {reservation.quantity}</p>
-                        </div>
-                        <div className="text-[#A7A7AB]">
-                          {expandedReservation === reservation.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                          <div className="text-[#A7A7AB]">
+                            {expandedReservation === reservation.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -361,6 +459,7 @@ const Admin = () => {
                               <div>
                                 <label className="block text-[#A7A7AB] text-sm mb-1">Status</label>
                                 <select
+                                  title="Reserveringsstatus"
                                   value={editForm.status || reservation.status}
                                   onChange={(e) => setEditForm({ ...editForm, status: e.target.value as Reservation['status'] })}
                                   className="w-full bg-[#0B0B0C]"
@@ -447,6 +546,18 @@ const Admin = () => {
                                 </div>
                               </div>
                             )}
+
+                            {reservation.paymentLink && (
+                              <div className="flex items-center gap-3">
+                                <CreditCard size={18} className="text-[#A7A7AB]" />
+                                <div>
+                                  <p className="text-[#A7A7AB] text-sm">Betaallink:</p>
+                                  <a href={reservation.paymentLink} target="_blank" rel="noreferrer" className="break-all text-[#D61C1C] hover:text-[#F06C6C]">
+                                    {reservation.paymentLink}
+                                  </a>
+                                </div>
+                              </div>
+                            )}
                             
                             {reservation.adminNotes && (
                               <div className="bg-[#0B0B0C] rounded-lg p-4">
@@ -454,6 +565,80 @@ const Admin = () => {
                                 <p className="text-white">{reservation.adminNotes}</p>
                               </div>
                             )}
+
+                            {reservation.messageHistory?.length ? (
+                              <div className="rounded-2xl border border-white/10 bg-[#0B0B0C] p-4">
+                                <p className="mb-3 text-sm font-medium text-white">Verzonden inbox-berichten</p>
+                                <div className="space-y-3">
+                                  {reservation.messageHistory.map((message) => (
+                                    <div key={message.id} className="rounded-xl border border-white/8 bg-white/[0.03] p-4">
+                                      <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                                        <p className="font-medium text-white">{message.subject}</p>
+                                        <span className="text-xs text-[#A7A7AB]">{new Date(message.createdAt).toLocaleString('nl-NL')}</span>
+                                      </div>
+                                      <p className="mb-2 text-xs uppercase tracking-[0.18em] text-[#D61C1C]">{message.kind === 'payment_request' ? 'PAYMENT REQUEST' : 'UPDATE'}</p>
+                                      <p className="whitespace-pre-line text-sm leading-relaxed text-[#C7C7CD]">{message.body}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : null}
+
+                            {messagingReservation === reservation.id ? (
+                              <div className="rounded-2xl border border-[#D61C1C]/20 bg-[#D61C1C]/10 p-5">
+                                <div className="mb-4 grid gap-4 md:grid-cols-2">
+                                  <div>
+                                    <label className="mb-2 block text-sm text-[#F1D4D4]">Type bericht</label>
+                                    <select
+                                      title="Berichttype"
+                                      value={messageDraft.kind}
+                                      onChange={(e) => setMessageDraft((prev) => ({ ...prev, kind: e.target.value as ReservationMessage['kind'] }))}
+                                      className="w-full bg-[#0B0B0C]"
+                                    >
+                                      <option value="payment_request">Payment request</option>
+                                      <option value="update">Update</option>
+                                    </select>
+                                  </div>
+                                  <div>
+                                    <label className="mb-2 block text-sm text-[#F1D4D4]">Betaallink</label>
+                                    <input
+                                      title="Betaallink"
+                                      type="url"
+                                      value={messageDraft.paymentLink}
+                                      onChange={(e) => setMessageDraft((prev) => ({ ...prev, paymentLink: e.target.value }))}
+                                      placeholder="https://tikkie.me/pay/..."
+                                      className="w-full bg-[#0B0B0C]"
+                                    />
+                                  </div>
+                                </div>
+                                <div className="mb-4">
+                                  <label className="mb-2 block text-sm text-[#F1D4D4]">Onderwerp</label>
+                                  <input
+                                    title="Onderwerp"
+                                    value={messageDraft.subject}
+                                    onChange={(e) => setMessageDraft((prev) => ({ ...prev, subject: e.target.value }))}
+                                    className="w-full bg-[#0B0B0C]"
+                                  />
+                                </div>
+                                <div className="mb-5">
+                                  <label className="mb-2 block text-sm text-[#F1D4D4]">Bericht</label>
+                                  <textarea
+                                    title="Bericht"
+                                    value={messageDraft.body}
+                                    onChange={(e) => setMessageDraft((prev) => ({ ...prev, body: e.target.value }))}
+                                    rows={6}
+                                    className="w-full bg-[#0B0B0C]"
+                                  />
+                                </div>
+                                <div className="flex flex-wrap gap-3">
+                                  <button onClick={() => handleSendMessage(reservation)} className="btn-primary flex items-center gap-2">
+                                    <Mail size={16} />
+                                    Stuur naar inbox
+                                  </button>
+                                  <button onClick={resetMessageComposer} className="btn-secondary">Sluiten</button>
+                                </div>
+                              </div>
+                            ) : null}
                             
                             <div className="flex gap-2 pt-4 border-t border-white/10">
                               <button
@@ -469,6 +654,13 @@ const Admin = () => {
                               >
                                 <Edit3 size={16} />
                                 Bewerken
+                              </button>
+                              <button
+                                onClick={() => handleOpenMessageComposer(reservation)}
+                                className="btn-secondary flex items-center gap-2"
+                              >
+                                <Mail size={16} />
+                                Bericht / Tikkie
                               </button>
                               {reservation.status === 'new' && (
                                 <>
@@ -542,10 +734,12 @@ const Admin = () => {
                     <div className="flex items-center gap-4">
                       <label className="text-[#A7A7AB] text-sm">Thema:</label>
                       <select
+                        title="Evenementthema"
                         value={event.theme}
                         onChange={(e) => handleUpdateEventTheme(event.id, e.target.value as Event['theme'])}
                         className="bg-[#141416] min-w-[180px]"
                       >
+                        <option value={event.theme}>{event.title}</option>
                         <option value="cuck">Cuck & Hotwife</option>
                         <option value="bbc">BBC Night</option>
                         <option value="swingers">Swingers Social</option>
@@ -559,6 +753,8 @@ const Admin = () => {
           </div>
         </section>
       )}
+
+      {activeTab === 'blog' && <AdminBlogPanel />}
     </div>
   );
 };

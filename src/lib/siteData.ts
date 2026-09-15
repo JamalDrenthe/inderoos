@@ -1,7 +1,7 @@
-import type { Language } from '../context/LanguageContext';
+import type { Language } from '../context/language';
 import type { Event } from '../types';
 
-export type LocalizedString = Record<Language, string>;
+export type LocalizedString = Partial<Record<Language, string>> & { nl: string; en: string; de: string; };
 
 export interface TicketOption {
   id: 'vrouw' | 'stel' | 'man';
@@ -35,6 +35,14 @@ export const languageOptions: Array<{ code: Language; label: string }> = [
   { code: 'nl', label: 'NL' },
   { code: 'en', label: 'EN' },
   { code: 'de', label: 'DE' },
+  { code: 'fr', label: 'FR' },
+  { code: 'es', label: 'ES' },
+  { code: 'pl', label: 'PL' },
+  { code: 'ar', label: 'AR' },
+  { code: 'ru', label: 'RU' },
+  { code: 'zh', label: 'ZH' },
+  { code: 'tr', label: 'TR' },
+  { code: 'uk', label: 'UK' },
 ];
 
 export const ticketOptions: TicketOption[] = [
@@ -234,14 +242,22 @@ const seasonLabels = {
 
 export const weekenders: Weekender[] = [
   {
-    id: 'week-12-arab-suikerfeest',
+    id: 'week-12-velvet-oasis',
     weekNumber: 12,
     seasonKey: 'march',
     seasonLabel: seasonLabels.march,
     title: {
-      nl: 'Arab / Suikerfeest',
-      en: 'Arab / Eid Edition',
-      de: 'Arab / Eid Edition',
+      nl: 'Velvet Oasis',
+      en: 'Velvet Oasis',
+      de: 'Velvet Oasis',
+      fr: 'Velvet Oasis',
+      es: 'Velvet Oasis',
+      pl: 'Velvet Oasis',
+      ar: 'Velvet Oasis',
+      ru: 'Velvet Oasis',
+      zh: 'Velvet Oasis',
+      tr: 'Velvet Oasis',
+      uk: 'Velvet Oasis',
     },
     startLabel: {
       nl: 'Start 19 maart',
@@ -254,7 +270,7 @@ export const weekenders: Weekender[] = [
       en: 'Warm lighting, soft textures, and a late-night crowd that understands discretion.',
       de: 'Warmes Licht, weiche Texturen und ein Late-Night-Publikum mit Sinn für Diskretion.',
     },
-    image: '/images/event_cuck.jpg',
+    image: '/images/hero_couple_2.jpg',
   },
   {
     id: 'week-13-lost-hour',
@@ -272,7 +288,7 @@ export const weekenders: Weekender[] = [
       en: 'A dark, tight weekend where time disappears and the afterglow lingers.',
       de: 'Ein dunkles, präzises Wochenende, in dem Zeit verschwindet und der Nachhall bleibt.',
     },
-    image: '/images/event_bbc.jpg',
+    image: '/images/hero_detail_1.jpg',
   },
   {
     id: 'week-14-pasen',
@@ -290,7 +306,7 @@ export const weekenders: Weekender[] = [
       en: 'A long Easter night with secret addresses, silent entry, and heavy bass.',
       de: 'Eine lange Osternacht mit geheimen Adressen, stillem Einlass und tiefem Bass.',
     },
-    image: '/images/event_swingers.jpg',
+    image: '/images/hero_couple_4.jpg',
   },
   {
     id: 'week-15-orthodox-pasen',
@@ -308,7 +324,7 @@ export const weekenders: Weekender[] = [
       en: 'International energy, long tables, closed circles, and an underground tempo.',
       de: 'Internationale Energie, lange Tafeln, geschlossene Kreise und Underground-Tempo.',
     },
-    image: '/images/theme_bdsm.jpg',
+    image: '/images/theme_bbc_alt.jpg',
   },
   {
     id: 'week-17-koningsdag',

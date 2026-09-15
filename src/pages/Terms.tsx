@@ -13,9 +13,9 @@ const Terms = () => {
                 In deze algemene voorwaarden wordt verstaan onder:
               </p>
               <ul className="space-y-2 text-[#A7A7AB] list-disc list-inside">
-                <li><strong>Organisator:</strong> Gang2Bang, de organisator van evenementen.</li>
+                <li><strong>Organisator:</strong> In De Roos, de organisator van evenementen.</li>
                 <li><strong>Deelnemer:</strong> De persoon die deelneemt aan een evenement.</li>
-                <li><strong>Evenement:</strong> Een door Gang2Bang georganiseerd feest of bijeenkomst.</li>
+                <li><strong>Evenement:</strong> Een door In De Roos georganiseerd feest of bijeenkomst.</li>
                 <li><strong>Reservering:</strong> Een door de deelnemer geplaatste bestelling voor deelname.</li>
               </ul>
             </div>
@@ -24,7 +24,7 @@ const Terms = () => {
               <h2 className="text-2xl font-bold text-white mb-4">2. Toepasselijkheid</h2>
               <p className="text-[#A7A7AB] mb-4">
                 Deze algemene voorwaarden zijn van toepassing op alle aanbiedingen, reserveringen en overeenkomsten 
-                tussen Gang2Bang en de deelnemer. Door het plaatsen van een reservering accepteert de deelnemer 
+                tussen In De Roos en de deelnemer. Door het plaatsen van een reservering accepteert de deelnemer 
                 deze voorwaarden.
               </p>
             </div>
@@ -32,7 +32,7 @@ const Terms = () => {
             <div className="card-dark p-8 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">3. Leeftijdsgrens</h2>
               <p className="text-[#A7A7AB] mb-4">
-                Deelname aan evenementen van Gang2Bang is uitsluitend toegestaan voor personen van 18 jaar en ouder. 
+                Deelname aan evenementen van In De Roos is uitsluitend toegestaan voor personen van 18 jaar en ouder. 
                 Bij binnenkomst wordt een geldig legitimatiebewijs gevraagd (paspoort, rijbewijs of ID-kaart).
               </p>
               <p className="text-[#A7A7AB]">
@@ -44,7 +44,7 @@ const Terms = () => {
             <div className="card-dark p-8 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">4. Reserveringen en betaling</h2>
               <p className="text-[#A7A7AB] mb-4">
-                Reserveringen kunnen uitsluitend online worden geplaatst via de website van Gang2Bang. 
+                Reserveringen kunnen uitsluitend online worden geplaatst via de website van In De Roos. 
                 Na plaatsing van een reservering ontvangt de deelnemer een betaallink via Tikkie.
               </p>
               <p className="text-[#A7A7AB] mb-4">
@@ -52,7 +52,7 @@ const Terms = () => {
                 Betaling dient te geschieden binnen 1 uur na ontvangst van de betaallink.
               </p>
               <p className="text-[#A7A7AB]">
-                Gang2Bang behoudt zich het recht voor om reserveringen te weigeren zonder opgave van redenen.
+                In De Roos behoudt zich het recht voor om reserveringen te weigeren zonder opgave van redenen.
               </p>
             </div>
 
@@ -63,7 +63,7 @@ const Terms = () => {
                 Bij annulering binnen 24 uur voor het evenement is het volledige bedrag verschuldigd.
               </p>
               <p className="text-[#A7A7AB]">
-                Gang2Bang behoudt zich het recht voor om een evenement te annuleren of te verplaatsen 
+                In De Roos behoudt zich het recht voor om een evenement te annuleren of te verplaatsen 
                 wegens overmacht. In dat geval ontvangt de deelnemer het volledige betaalde bedrag terug.
               </p>
             </div>
@@ -86,7 +86,7 @@ const Terms = () => {
             <div className="card-dark p-8 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">7. Privacy</h2>
               <p className="text-[#A7A7AB] mb-4">
-                Gang2Bang respecteert de privacy van alle deelnemers. Wat er op de evenementen gebeurt, 
+                In De Roos respecteert de privacy van alle deelnemers. Wat er op de evenementen gebeurt, 
                 blijft vertrouwelijk. Het maken van foto&apos;s of video&apos;s zonder uitdrukkelijke toestemming 
                 is verboden.
               </p>
@@ -99,7 +99,7 @@ const Terms = () => {
             <div className="card-dark p-8 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">8. Aansprakelijkheid</h2>
               <p className="text-[#A7A7AB] mb-4">
-                De deelnemer neemt op eigen risico deel aan evenementen. Gang2Bang is niet aansprakelijk 
+                De deelnemer neemt op eigen risico deel aan evenementen. In De Roos is niet aansprakelijk 
                 voor verlies, diefstal of beschadiging van persoonlijke eigendommen.
               </p>
               <p className="text-[#A7A7AB]">
@@ -112,21 +112,21 @@ const Terms = () => {
               <h2 className="text-2xl font-bold text-white mb-4">9. Klachten</h2>
               <p className="text-[#A7A7AB] mb-4">
                 Klachten over het evenement of andere deelnemers kunnen worden gemeld bij de hosts 
-                tijdens het evenement of achteraf via info@gang2bang.nl.
+                tijdens het evenement of achteraf via hello@inderoos.nl.
               </p>
               <p className="text-[#A7A7AB]">
-                Gang2Bang zal klachten serieus behandelen en indien nodig passende maatregelen nemen.
+                In De Roos zal klachten serieus behandelen en indien nodig passende maatregelen nemen.
               </p>
             </div>
 
             <div className="card-dark p-8">
               <h2 className="text-2xl font-bold text-white mb-4">10. Wijzigingen</h2>
               <p className="text-[#A7A7AB] mb-4">
-                Gang2Bang behoudt zich het recht voor om deze algemene voorwaarden te wijzigen. 
+                In De Roos behoudt zich het recht voor om deze algemene voorwaarden te wijzigen. 
                 Wijzigingen worden van kracht zodra ze op de website zijn gepubliceerd.
               </p>
               <p className="text-[#A7A7AB]">
-                Voor vragen over deze voorwaarden kun je contact opnemen via info@gang2bang.nl.
+                Voor vragen over deze voorwaarden kun je contact opnemen via hello@inderoos.nl.
               </p>
             </div>
           </div>

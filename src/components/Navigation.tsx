@@ -17,8 +17,9 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobileMenuOpen(false);
-  }, [location]);
+  }, [location.pathname]);
 
   const navLinks = [
     { path: '/evenementen', label: 'Evenementen' },
@@ -41,7 +42,7 @@ const Navigation = () => {
         <div className="w-full px-6 lg:px-12 flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold tracking-tight" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+            <span className="text-2xl font-bold tracking-tight font-sans">
               Gang<span className="text-[#D61C1C]">2</span>Bang
             </span>
           </Link>
@@ -83,6 +84,7 @@ const Navigation = () => {
           <button
             className="absolute top-6 right-6 text-white p-2"
             onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Sluit menu"
           >
             <X size={24} />
           </button>

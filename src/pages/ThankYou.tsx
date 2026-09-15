@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Check, Lock, MapPin, CreditCard, ArrowRight } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 interface ThankYouState {
   email?: string;
@@ -127,7 +127,7 @@ const ThankYou = () => {
     },
   } as const;
 
-  const copy = content[language];
+  const copy = content[language as keyof typeof content] || content.en;
 
   return (
     <div className="min-h-screen pt-28 pb-16 px-6 lg:px-12">

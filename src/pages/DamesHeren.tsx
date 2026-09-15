@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Heart, Users, Sparkles } from 'lucide-react';
+import { Heart, Users, Sparkles, Mail, LockKeyhole } from 'lucide-react';
+import { getStoredMemberSession, isSessionValid } from '../lib/memberAuth';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,7 +27,7 @@ const profiles: Profile[] = [
     type: 'dame',
     quote: 'Mijn hakken blijven aan, de rest mag vallen. Ik ben geen muurbloempje.',
     style: 'Verleidelijk',
-    image: '/images/profile_nadia.jpg',
+    image: '/images/hero_couple_1.jpg',
     isHost: true,
   },
   {
@@ -35,7 +37,7 @@ const profiles: Profile[] = [
     type: 'dame',
     quote: 'Ik kom voor de spanning, ik blijf voor de chemie.',
     style: 'Nieuwsgierig',
-    image: '/images/profile_sophie.jpg',
+    image: '/images/hero_couple_2.jpg',
   },
   {
     id: '3',
@@ -44,7 +46,7 @@ const profiles: Profile[] = [
     type: 'dame',
     quote: 'Oogcontact is het beste voorspel. Durf je te kijken?',
     style: 'Dominant',
-    image: '/images/profile_elena.jpg',
+    image: '/images/hero_couple_3.jpg',
     isHost: true,
   },
   {
@@ -54,7 +56,7 @@ const profiles: Profile[] = [
     type: 'dame',
     quote: 'Ik zoek iemand die weet wat hij wil. En het durft te vragen.',
     style: 'Avontuurlijk',
-    image: '/images/profile_lisa.jpg',
+    image: '/images/hero_couple_4.jpg',
   },
   {
     id: '5',
@@ -63,7 +65,7 @@ const profiles: Profile[] = [
     type: 'dame',
     quote: 'Zachtjes beginnen, hard eindigen. Dat is mijn ritme.',
     style: 'Passioneel',
-    image: '/images/profile_maya.jpg',
+    image: '/images/hero_couple_5.jpg',
   },
   {
     id: '6',
@@ -72,7 +74,7 @@ const profiles: Profile[] = [
     type: 'dame',
     quote: 'Ik dans graag. Op de muziek. Op jou.',
     style: 'Speels',
-    image: '/images/profile_iris.jpg',
+    image: '/images/hero_couple_6.jpg',
   },
   // Heren
   {
@@ -82,17 +84,8 @@ const profiles: Profile[] = [
     type: 'heer',
     quote: 'Ik leid graag, maar volg als je me weet te verrassen.',
     style: 'Gedreven',
-    image: '/images/profile_julian.jpg',
+    image: '/images/hero_group_1.jpg',
     isHost: true,
-  },
-  {
-    id: '8',
-    name: 'Samir',
-    age: 37,
-    type: 'heer',
-    quote: 'Dansen is voorspel. Ik zoek een vrouw die durft.',
-    style: 'Charismatisch',
-    image: '/images/profile_samir.jpg',
   },
   {
     id: '9',
@@ -101,7 +94,7 @@ const profiles: Profile[] = [
     type: 'heer',
     quote: 'Mijn handen zijn warm en weten wat ze willen.',
     style: 'Ervaren',
-    image: '/images/profile_marcus.jpg',
+    image: '/images/hero_group_2.jpg',
     isHost: true,
   },
   {
@@ -111,7 +104,7 @@ const profiles: Profile[] = [
     type: 'heer',
     quote: 'Ik kijk graag toe. Maar ik doe liever mee.',
     style: 'Nieuwsgierig',
-    image: '/images/profile_thomas.jpg',
+    image: '/images/theme_bdsm.jpg',
   },
   {
     id: '11',
@@ -120,7 +113,7 @@ const profiles: Profile[] = [
     type: 'heer',
     quote: 'Spannend is niet eng. Spannend is leven.',
     style: 'Avontuurlijk',
-    image: '/images/profile_david.jpg',
+    image: '/images/event_bbc.jpg',
   },
   {
     id: '12',
@@ -129,7 +122,7 @@ const profiles: Profile[] = [
     type: 'heer',
     quote: 'Ik weet wat ik wil. En ik vraag het gewoon.',
     style: 'Direct',
-    image: '/images/profile_ruben.jpg',
+    image: '/images/event_cuck.jpg',
   },
   // Stellen
   {
@@ -139,7 +132,7 @@ const profiles: Profile[] = [
     type: 'stel',
     quote: 'Zij kijkt, hij laat zich gaan. We zoeken iemand die onze dynamiek begrijpt.',
     style: 'Open',
-    image: '/images/profile_lievebram.jpg',
+    image: '/images/event_swingers.jpg',
     isHost: true,
   },
   {
@@ -149,7 +142,7 @@ const profiles: Profile[] = [
     type: 'stel',
     quote: 'Samen ontdekken we grenzen. Samen gaan we eroverheen.',
     style: 'Nieuwsgierig',
-    image: '/images/profile_annamark.jpg',
+    image: '/images/safety_hosts.jpg',
   },
   {
     id: '15',
@@ -158,20 +151,23 @@ const profiles: Profile[] = [
     type: 'stel',
     quote: 'Wij delen alles. Ons bed. Onze fantasieën. Onze nachten.',
     style: 'Gepassioneerd',
-    image: '/images/profile_kimjeroen.jpg',
+    image: '/images/hero_couple_1.jpg',
   },
 ];
 
 const DamesHeren = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'dame' | 'heer' | 'stel'>('all');
   const [hoveredProfile, setHoveredProfile] = useState<string | null>(null);
+  const [isLoggedIn] = useState(() => isSessionValid(getStoredMemberSession()));
 
   const filteredProfiles = filter === 'all' 
     ? profiles 
     : profiles.filter(p => p.type === filter);
 
   useEffect(() => {
+
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: sectionRef.current,
@@ -225,7 +221,7 @@ const DamesHeren = () => {
             De Chemie
           </p>
           <p className="text-[#A7A7AB] text-lg max-w-3xl mx-auto leading-relaxed">
-            Dit zijn de gezichten, de lichamen en de blikken die Gang2Bang maken tot wat het is. 
+            Dit zijn de gezichten, de lichamen en de blikken die In De Roos maken tot wat het is. 
             Geen poppenkast, maar echte mannen en vrouwen met een honger naar meer. 
             Ze zijn hier voor de spanning, de dans, de aanraking en alles wat daarna komt.
           </p>
@@ -319,20 +315,37 @@ const DamesHeren = () => {
                   </div>
 
                   {/* Overlay on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-t from-[#0B0B0C] via-[#0B0B0C]/60 to-transparent transition-opacity duration-500 ${
+                  <div className={`absolute inset-0 bg-gradient-to-t from-[#0B0B0C] via-[#0B0B0C]/80 to-transparent transition-opacity duration-500 ${
                     hoveredProfile === profile.id ? 'opacity-100' : 'opacity-0'
                   }`} />
 
                   {/* Content */}
-                  <div className={`absolute inset-x-0 bottom-0 p-6 transition-all duration-500 ${
+                  <div className={`absolute inset-x-0 bottom-0 p-6 flex flex-col justify-end transition-all duration-500 ${
                     hoveredProfile === profile.id ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
                   }`}>
-                    <p className="text-[#D61C1C] text-xs font-medium uppercase tracking-wider mb-1">
+                    <p className="text-[#D61C1C] text-xs font-medium uppercase tracking-wider mb-2">
                       {profile.style}
                     </p>
-                    <p className="text-white/80 text-sm italic leading-relaxed mb-3">
+                    <p className="text-white/90 text-sm italic leading-relaxed mb-4">
                       &ldquo;{profile.quote}&rdquo;
                     </p>
+                    {isLoggedIn ? (
+                      <button 
+                        onClick={() => navigate('/community')}
+                        className="flex items-center justify-center gap-2 w-full bg-white text-black py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-transform hover:scale-105"
+                      >
+                        <Mail size={14} />
+                        Stuur bericht
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => navigate('/member-login')}
+                        className="flex items-center justify-center gap-2 w-full border border-white/20 bg-black/40 backdrop-blur-sm text-white py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors hover:bg-white/10"
+                      >
+                        <LockKeyhole size={14} />
+                        Login om te chatten
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -351,6 +364,31 @@ const DamesHeren = () => {
         </div>
       </section>
 
+      <section className="px-6 lg:px-12 mt-20">
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-[32px] border border-white/8 bg-[linear-gradient(180deg,rgba(214,28,28,0.16),rgba(20,20,22,0.82))] p-8 md:p-10">
+            <div className="flex items-center gap-3 mb-4 text-[#D61C1C]">
+              <Sparkles size={18} />
+              <span className="mono">PROMO</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Wil jij jezelf discreet promoten?
+            </h2>
+            <p className="max-w-3xl text-[#ECECF0] leading-relaxed mb-6">
+              Ben je dame, heer of stel en wil je zichtbaar worden binnen onze selectie? Stuur je foto's, bio, stijl en intentie via contact. We kijken alleen naar profielen die passen bij de sfeer, discretie en chemie van In De Roos.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/contact">
+                <button className="btn-primary">Vraag promo aan</button>
+              </Link>
+              <Link to="/gallery">
+                <button className="btn-secondary">Bekijk gallerij</button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Disclaimer */}
       <section className="px-6 lg:px-12 mt-24">
         <div className="max-w-4xl mx-auto">
@@ -358,7 +396,7 @@ const DamesHeren = () => {
             <p className="text-[#A7A7AB] text-sm leading-relaxed">
               Alle getoonde personen zijn 18+ en hebben schriftelijke toestemming gegeven voor het gebruik van hun profiel. 
               Hun aanwezigheid op deze site is hun eigen keuze. Net als wat er tijdens een evenement gebeurt. 
-              Gang2Bang respecteert de privacy en grenzen van alle deelnemers.
+              In De Roos respecteert de privacy en grenzen van alle deelnemers.
             </p>
           </div>
         </div>
@@ -368,14 +406,14 @@ const DamesHeren = () => {
       <section className="px-6 lg:px-12 mt-16">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-white text-xl mb-6">
-            Klaar om de chemie te voelen?
+            Klaar om de chemie live te voelen?
           </p>
-          <a href="/evenementen">
+          <Link to="/evenementen">
             <button className="btn-primary flex items-center gap-2 mx-auto">
               <Heart size={18} className="fill-white" />
               Bekijk evenementen
             </button>
-          </a>
+          </Link>
         </div>
       </section>
     </div>

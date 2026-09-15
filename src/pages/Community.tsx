@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Shield, Lock, MessageSquareText, Users, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from '../context/useLanguage';
 
 const Community = () => {
   const { language } = useLanguage();
@@ -85,7 +85,7 @@ const Community = () => {
     },
   } as const;
 
-  const copy = content[language];
+  const copy = content[language as keyof typeof content] || content.en;
 
   return (
     <div className="min-h-screen pt-28 pb-16 px-6 lg:px-12">
